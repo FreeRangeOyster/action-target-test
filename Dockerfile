@@ -11,4 +11,5 @@ RUN go build -v -o /usr/local/bin/app ./...
 
 EXPOSE 8080
 
-CMD ["app"]
+ENTRYPOINT ["app"]
+CMD ["-hosts","actiontarget.com"]
