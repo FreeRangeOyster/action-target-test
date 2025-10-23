@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Action Target Test - Host Status</title>
+    <style>
+      .host {
+        border: 1px black solid;
+        padding: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Host Statuses</h1>
+      <p>Session started {{ .SessionStart.Format "2006-01-02 15:04:05" }}</p>
+      <p>Checking hosts on port {{ .Port }}</p>
+    </header>
+    <main>
+      <div id="host-data">
+        {{ range .Hosts }}
+        <div class="host">
+          <h2>{{ .Hostname }}</h2>
+          <h3>Status: Online</h3>
+          <p>Last Seen: {{ .LastSeen.Format "2006-01-02 15:04:05" }}</p>
+          <p>Session Average Latency: {{ if (.SessionAverageLatency | gt 0) }}{{ .SessionAverageLatency }}ms{{ else }}Unknown{{ end }}</p>
+          <p>Five Minute Average Latency: {{ if (.FiveMinuteAverageLatency | gt 0) }}{{ .FiveMinuteAverageLatency }}ms{{ else }}Unknown{{ end }}</p>
+          <p>Five Minute Failed Calls: {{ .FiveMinuteFailures }}</p>
+        </div>
+        {{ end }}
+      </div>
+    </main>
+    <footer></footer>
+  </body>
+</html>
