@@ -93,12 +93,16 @@ func main() {
 		}
 	})
 
-	fmt.Println("Server is running at localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	go serve()
 
 	for message := range channel {
 		updateLog(message, &logs, &data.Hosts)
 	}
+}
+
+func serve() {
+	fmt.Println("Server is running at localhost:8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func checkHost(hostname string, port int, interval time.Duration, channel chan<- CheckLogMessage) {
@@ -113,7 +117,7 @@ func checkHost(hostname string, port int, interval time.Duration, channel chan<-
 		if conn != nil {
 			endTime := time.Now()
 			var latency time.Duration = endTime.Sub(startTime)
-			fmt.Println("Opened", net.JoinHostPort(hostname, portStr))
+			// fmt.Println("Opened", net.JoinHostPort(hostname, portStr))
 			channel <- CheckLogMessage{Hostname: hostname, Log: CheckLog{Timestamp: time.Now(), Latency: uint16(latency.Milliseconds())}}
 			conn.Close()
 		} else {
@@ -148,6 +152,7 @@ func updateLog(message CheckLogMessage, logs *map[string][]CheckLog, data *map[s
 	host.FiveMinuteAverageLatency = avgLatency(fiveMinuteLatency)
 	host.SessionAverageLatency = avgLatency(sessionLatency)
 	host.FiveMinuteFailures = uint64(fiveMinuteCalls - uint(len(fiveMinuteLatency)))
+	fmt.Println(host)
 
 	(*data)[message.Hostname] = host
 }
